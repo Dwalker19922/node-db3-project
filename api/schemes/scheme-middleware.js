@@ -1,13 +1,16 @@
-/*
-  If `scheme_id` does not exist in the database:
+const {findById} =require('./scheme-model')
 
-  status 404
-  {
-    "message": "scheme with scheme_id <actual id> not found"
-  }
-*/
 const checkSchemeId = (req, res, next) => {
-
+  findById(req.params.scheme_id)
+  .then((data) =>{
+    if(!data){
+      res.status(404).json({message:`scheme with scheme_id ${req.params.scheme_id} not found`})
+    }
+    else{
+      next()
+    }
+  })
+  .catch(next)
 }
 
 /*
@@ -19,7 +22,12 @@ const checkSchemeId = (req, res, next) => {
   }
 */
 const validateScheme = (req, res, next) => {
-
+  if(!req.body.scheme_name||typeof req.body.scheme_name!== "string"){
+    res.status(400).json({message:"invalid scheme_name"})
+  }
+  else{
+    next()
+  }
 }
 
 /*
@@ -32,7 +40,12 @@ const validateScheme = (req, res, next) => {
   }
 */
 const validateStep = (req, res, next) => {
-
+  if(!req.body.instructions||req.body.instructions===""||typeof req.body.instructions !=="string"||!req.body.step_number||typeof req.body.step_number !=="number"||req.body.step_number<1){
+    res.status(400).json({message:"invalid step"})
+  }
+  else{
+  next()
+  }
 }
 
 module.exports = {
